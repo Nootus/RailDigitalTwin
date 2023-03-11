@@ -3,7 +3,37 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rail.DigitalTwin.Core", "Rail.DigitalTwin.Core\Rail.DigitalTwin.Core.csproj", "{DBB97FAC-0ECB-41E7-BFE6-BD859E45E2C3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rail.DigitalTwin.DeviceSimulator", "Rail.DigitalTwin.DeviceSimulator\Rail.DigitalTwin.DeviceSimulator.csproj", "{C8160C8A-3DB8-4DDD-91DE-FA4102505292}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rail.DigitalTwin.AzureFunctions", "Rail.DigitalTwin.AzureFunctions\Rail.DigitalTwin.AzureFunctions.csproj", "{9B7B4FF7-A4DC-4FC5-B91C-178692C30E4B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rail.DigitalTwin.Functions", "Rail.DigitalTwin.Functions\Rail.DigitalTwin.Functions.csproj", "{A70B30F9-F934-454E-8B65-2CC95C166ACB}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DBB97FAC-0ECB-41E7-BFE6-BD859E45E2C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBB97FAC-0ECB-41E7-BFE6-BD859E45E2C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBB97FAC-0ECB-41E7-BFE6-BD859E45E2C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBB97FAC-0ECB-41E7-BFE6-BD859E45E2C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8160C8A-3DB8-4DDD-91DE-FA4102505292}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8160C8A-3DB8-4DDD-91DE-FA4102505292}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8160C8A-3DB8-4DDD-91DE-FA4102505292}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8160C8A-3DB8-4DDD-91DE-FA4102505292}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B7B4FF7-A4DC-4FC5-B91C-178692C30E4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B7B4FF7-A4DC-4FC5-B91C-178692C30E4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B7B4FF7-A4DC-4FC5-B91C-178692C30E4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B7B4FF7-A4DC-4FC5-B91C-178692C30E4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A70B30F9-F934-454E-8B65-2CC95C166ACB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A70B30F9-F934-454E-8B65-2CC95C166ACB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A70B30F9-F934-454E-8B65-2CC95C166ACB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A70B30F9-F934-454E-8B65-2CC95C166ACB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection

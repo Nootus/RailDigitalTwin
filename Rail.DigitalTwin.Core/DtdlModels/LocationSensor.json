@@ -1,0 +1,60 @@
+{
+  "@context": "dtmi:dtdl:context;2",
+  "@id": "dtmi:com:nootus:LocationSensor;1",
+  "@type": "Interface",
+  "displayName": "LocationSensor",
+  "contents": [
+    {
+      "@type": "Property",
+      "name": "location",
+      "schema": {
+        "@type": "Object",
+        "fields": [
+          {
+            "name": "latitude",
+            "schema": "double"
+          },
+          {
+            "name": "longitude",
+            "schema": "double"
+          }
+        ]
+      }
+    },
+    {
+      "@type": "Property",
+      "name": "position",
+      "schema": {
+        "@type": "Enum",
+        "valueSchema": "integer",
+        "enumValues": [
+          {
+            "name": "front",
+            "displayName": "Front",
+            "enumValue": 1
+          },
+          {
+            "name": "rear",
+            "displayName": "Rear",
+            "enumValue": 2
+          }
+        ]
+      }
+    },
+    {
+      "@type": "Property",
+      "name": "distanceTravelled",
+      "schema": "double"
+    },
+    {
+      "@type": "Property",
+      "name": "speed",
+      "schema": "double"
+    },
+    {
+      "@type": "Property",
+      "name": "timeElapsed",
+      "schema": "integer"
+    }
+  ]
+}

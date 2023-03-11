@@ -1,0 +1,63 @@
+{
+  "@context": "dtmi:dtdl:context;2",
+  "@id": "dtmi:com:nootus:Section;1",
+  "@type": "Interface",
+  "displayName": "Section",
+  "contents": [
+    {
+      "@type": "Property",
+      "name": "length",
+      "schema": "integer"
+    },
+    {
+      "@type": "Property",
+      "name": "speed",
+      "schema": "double"
+    },
+    {
+      "@type": "Property",
+      "name": "safeDistance",
+      "schema": "integer"
+    },
+    {
+      "@type": "Property",
+      "name": "criticalDistance",
+      "schema": "integer"
+    },
+    {
+      "@type": "Property",
+      "name": "startLocation",
+      "schema": {
+        "@type": "Object",
+        "fields": [
+          {
+            "name": "latitude",
+            "schema": "double"
+          },
+          {
+            "name": "longitude",
+            "schema": "double"
+          }
+        ]
+      }
+    },
+    {
+      "@type": "Property",
+      "name": "endLocation",
+      "schema": {
+        "@type": "Object",
+        "fields": [
+          {
+            "name": "latitude",
+            "schema": "double"
+          },
+          {
+            "name": "longitude",
+            "schema": "double"
+          }
+        ]
+      }
+    }
+  ]
+}
+

@@ -1,0 +1,55 @@
+{
+  "@context": "dtmi:dtdl:context;2",
+  "@id": "dtmi:com:nootus:Train;1",
+  "@type": "Interface",
+  "displayName": "Train",
+  "contents": [
+    {
+      "@type": "Property",
+      "name": "trainID",
+      "schema": "integer"
+    },
+    {
+      "@type": "Property",
+      "name": "trainNumber",
+      "schema": "integer"
+    },
+    {
+      "@type": "Property",
+      "name": "trainName",
+      "schema": "string"
+    },
+    {
+      "@type": "Property",
+      "name": "trainLength",
+      "schema": "integer"
+    },
+    {
+      "@type": "Property",
+      "name": "speed",
+      "schema": "double"
+    },
+    {
+      "@type": "Property",
+      "name": "recommendedSpeed",
+      "schema": "double"
+    },
+    {
+      "@type": "Component",
+      "name": "frontSensor",
+      "schema": "dtmi:com:nootus:LocationSensor;1"
+    },
+    {
+      "@type": "Component",
+      "name": "rearSensor",
+      "schema": "dtmi:com:nootus:LocationSensor;1"
+    },
+    {
+      "@type": "Relationship",
+      "@id": "dtmi:com:nootus:Train:Section;1",
+      "name": "section",
+      "displayName": "Section",
+      "target": "dtmi:com:nootus:Section;1"
+    }    
+  ]
+}
