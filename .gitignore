@@ -231,3 +231,4 @@ _Pvt_Extensions
 .fake/
 /MovingBlock.Client/ClientApp/.angular/
 /Rail.DigitalTwin.DeviceSimulator/App.config
+/Rail.DigitalTwin.AzureFunctions/host.json
