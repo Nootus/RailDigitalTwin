@@ -4,6 +4,7 @@ namespace Rail.DigitalTwin.Core.Models
 {
     public class SectionModel
     {
+        public string SectionID { get; set; }
         public int Length { get; set; }  // meters
         public double Speed { get; set; }     // meters / sec
         public int SafeDistance { get; set; } // meters

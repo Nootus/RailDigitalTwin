@@ -1,5 +1,4 @@
-﻿using Azure.DigitalTwins.Core;
-using Rail.DigitalTwin.Core.Models;
+﻿using Rail.DigitalTwin.Core.Models;
 using Rail.DigitalTwin.Core.Utilities;
 
 namespace Rail.DigitalTwin.Functions
@@ -11,9 +10,6 @@ namespace Rail.DigitalTwin.Functions
 
         private static readonly object _lockObj;
 
-
-        // Azure objects
-        private static DigitalTwinsClient? _client;
 
         static DigitalTwinFunctions()
         {
@@ -53,8 +49,8 @@ namespace Rail.DigitalTwin.Functions
                 if (_twinData.TrainTwins.Count > 0)
                     trainTwin.TrainID = _twinData.TrainTwins.Last().TrainID + 1;
                 else
-                    trainTwin.TrainID = 1;
-                trainTwin.Section = _twinData.SectionTwin!;
+                    trainTwin.TrainID = "1";
+                //trainTwin.Section = _twinData.SectionTwin!;
                 Location frontLocation = _twinData.SectionTwin!.StartLocation;
                 Location rearLocation = DistanceCalculator.GetPoint2(frontLocation, -trainTwin.TrainLength);
 

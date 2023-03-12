@@ -12,9 +12,26 @@ AzureConfig azureConfig = new AzureConfig()
 
 string modelDirectory = AppContext.BaseDirectory + ConfigurationManager.AppSettings["ModelDirectory"]!;
 
+
+TrainModel trainModel = new TrainModel()
+{
+    TrainNumber = 123,
+    TrainName = "PPK",
+    TrainLength = 350,
+    Speed = 120 * (5.0 / 18),
+};
+
+
+
 DigitalTwinFunctions.Initialize(azureConfig);
-//await DigitalTwinFunctions.DeleteModelsAsync();
-//await DigitalTwinFunctions.CreateModelsAsync(modelDirectory);
+await DigitalTwinFunctions.CleanupAsync();
+await DigitalTwinFunctions.CreateModelsAsync(modelDirectory);
+await DigitalTwinFunctions.CreateSectionTwinAsync();
+await DigitalTwinFunctions.CreateTrainTwinAsync(trainModel);
+
+//await DigitalTwinFunctions.CleanupAsync();
+
+
 
 //DeviceSimulator simulator = new DeviceSimulator();
 //List<TrainModel> trainTwins = simulator.Initialize();

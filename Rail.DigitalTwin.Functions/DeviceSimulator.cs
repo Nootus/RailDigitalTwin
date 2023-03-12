@@ -49,8 +49,8 @@ namespace Rail.DigitalTwin.Functions
             double speed = trainTwin.SimulatorSpeed + randomNumber;
             double distanceTravelled = speed * _timer;
 
-            frontSensor.CurrentLocation = DistanceCalculator.GetPoint2(frontSensor.CurrentLocation, distanceTravelled);
-            rearSensor.CurrentLocation = DistanceCalculator.GetPoint2(rearSensor.CurrentLocation, distanceTravelled);
+            frontSensor.Location = DistanceCalculator.GetPoint2(frontSensor.Location, distanceTravelled);
+            rearSensor.Location = DistanceCalculator.GetPoint2(rearSensor.Location, distanceTravelled);
             frontSensor.TimeElapsed = _timer;
             rearSensor.TimeElapsed = _timer;
             DeviceTwinFunctions.ProcessLocationSensor(frontSensor);

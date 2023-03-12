@@ -15,7 +15,7 @@ namespace Rail.DigitalTwin.Core.Models
         public double FrontTravelled { get; set; } = 0;  // meters
         public double RearTravelled { get; set; } = 0;  // meters
 
-        public int TrainID { get; set; }
+        public string TrainID { get; set; }
         public int TrainNumber { get;set; }
 
         public string TrainName { get; set; }

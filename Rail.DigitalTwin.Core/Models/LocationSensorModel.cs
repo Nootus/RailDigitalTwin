@@ -8,7 +8,7 @@ namespace Rail.DigitalTwin.Core.Models
         {
             SensorId = sensorId;
             Position = position;
-            CurrentLocation = location;
+            Location = location;
             DistanceTravelled = 0;
             Speed = 0;
             TimeElapsed = 0;
@@ -18,7 +18,7 @@ namespace Rail.DigitalTwin.Core.Models
         {
             SensorId = sensor.SensorId;
             Position = sensor.Position;
-            CurrentLocation = sensor.CurrentLocation;
+            Location = sensor.Location;
             DistanceTravelled = 0;
             Speed = 0;
             TimeElapsed = 0;
@@ -26,7 +26,7 @@ namespace Rail.DigitalTwin.Core.Models
 
         public string SensorId { get; set; }
         public SensorPosition Position { get; set; }
-        public Location CurrentLocation { get; set; }
+        public Location Location { get; set; }
         public double DistanceTravelled { get; set; } // meters
         public double Speed { get; set; }
         public int TimeElapsed { get; set; }

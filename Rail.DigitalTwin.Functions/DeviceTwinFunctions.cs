@@ -14,15 +14,15 @@ namespace Rail.DigitalTwin.Functions
         {
             // getting sensorid
             LocationSensorModel sensorTwin = _twinData.SensorTwins[sensor.SensorId];
-            double distanceTravelled = DistanceCalculator.CalculateDistance(sensor.CurrentLocation, sensorTwin.CurrentLocation);
+            double distanceTravelled = DistanceCalculator.CalculateDistance(sensor.Location, sensorTwin.Location);
 
             // check for geofense & calculating the distance travelled by sensor
-            if (sensor.CurrentLocation.Longitude > _twinData.SectionTwin.StartLocation.Longitude)
+            if (sensor.Location.Longitude > _twinData.SectionTwin.StartLocation.Longitude)
             {
                 // checking when the sensor entered the section
                 if (sensorTwin.DistanceTravelled == 0)
                 {
-                    sensorTwin.DistanceTravelled = DistanceCalculator.CalculateDistance(sensor.CurrentLocation, _twinData.SectionTwin.StartLocation);
+                    sensorTwin.DistanceTravelled = DistanceCalculator.CalculateDistance(sensor.Location, _twinData.SectionTwin.StartLocation);
                 }
                 else
                 {
@@ -37,7 +37,7 @@ namespace Rail.DigitalTwin.Functions
             }
 
             sensorTwin.Speed = distanceTravelled / sensor.TimeElapsed;
-            sensorTwin.CurrentLocation = sensor.CurrentLocation;
+            sensorTwin.Location = sensor.Location;
 
             _sensorQueue.Enqueue(sensorTwin);
         }

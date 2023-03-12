@@ -6,11 +6,6 @@
   "contents": [
     {
       "@type": "Property",
-      "name": "trainID",
-      "schema": "integer"
-    },
-    {
-      "@type": "Property",
       "name": "trainNumber",
       "schema": "integer"
     },
