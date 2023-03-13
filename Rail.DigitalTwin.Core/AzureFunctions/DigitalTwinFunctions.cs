@@ -8,7 +8,8 @@ namespace Rail.DigitalTwin.Core.AzureFunctions
         private static readonly object _lockObj = new Object();
         private static RailClient? _client;
 
-        public static void Initialize(AzureConfig azureConfig)
+        #region Initialize
+        public static void Connect(AzureConfig azureConfig)
         {
             _client = new RailClient(azureConfig);
             Console.WriteLine("Client created");
@@ -20,28 +21,25 @@ namespace Rail.DigitalTwin.Core.AzureFunctions
             Console.WriteLine("Models created");
         }
 
+        public static async Task CreateSectionTwinAsync(SectionModel sectionModel)
+        {
+            await _client!.CreateSectionTwinAsync(sectionModel);
+            Console.WriteLine("Section Twin Created");
+        }
+        #endregion
+
+        #region Cleanup
+        public static async Task CleanupAsync()
+        {
+            // delete all Twins and Models
+            await DeleteTwinsAsync();
+            await DeleteModelsAsync();
+        }
+
         public static async Task DeleteModelsAsync()
         {
             await _client!.DeleteModelsAsync();
             Console.WriteLine("Models deleted");
-        }
-
-        public static async Task<SectionModel> CreateSectionTwinAsync()
-        {
-            Console.WriteLine("Section Twin Created");
-            return await _client!.CreateSectionTwinAsync();
-        }
-
-        public static async Task CreateTrainTwinAsync(TrainModel model)
-        {
-            await _client!.CreateTrainTwinAsync(model);
-            Console.WriteLine("Train Twin Created");
-        }
-
-        public static async Task DeleteTrainTwins()
-        {
-            await _client!.DeleteTrainTwinsAsync();
-            Console.WriteLine("Train Twins Deleted");
         }
 
         public static async Task DeleteTwinsAsync()
@@ -50,13 +48,27 @@ namespace Rail.DigitalTwin.Core.AzureFunctions
             Console.WriteLine("All Twins Deleted");
         }
 
-        public static async Task CleanupAsync()
+        public static async Task DeleteTrainTwins()
         {
-            // delete all Twins and Models
-            await DeleteTwinsAsync();
-            await DeleteModelsAsync();
+            await _client!.DeleteTrainTwinsAsync();
+            Console.WriteLine("Train Twins Deleted");
+        }
+        #endregion
+
+        public static async Task CreateTrainTwinAsync(TrainModel model)
+        {
+            await _client!.CreateTrainTwinAsync(model);
+            Console.WriteLine("Train Twin Created");
         }
 
+        public static async Task<List<TrainModel>> GetTrainsAsync()
+        {
+            return await _client!.GetTrainsAsync();
+        }
 
+        public static async Task<SectionModel> GetSectionAsync()
+        {
+            return await _client!.GetSectionAsync();
+        }
     }
 }

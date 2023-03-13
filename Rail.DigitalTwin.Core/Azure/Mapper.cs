@@ -24,13 +24,13 @@ namespace Rail.DigitalTwin.Core.Azure
                     { "startLocation", new Dictionary<string,object>
                         {
                             { "latitude", model.StartLocation.Latitude },
-                            { "longitude", Math.Round(model.StartLocation.Longitude, 4) }
+                            { "longitude", model.StartLocation.Longitude }
                         }
                     },
                     { "endLocation", new Dictionary<string,object>
                         {
                             { "latitude", model.EndLocation.Latitude },
-                            { "longitude", Math.Round(model.EndLocation.Longitude, 4) }
+                            { "longitude", model.EndLocation.Longitude }
                         }
                     }
                 }
@@ -57,7 +57,7 @@ namespace Rail.DigitalTwin.Core.Azure
 
         public static BasicDigitalTwin MapTrain(TrainModel model)
         {
-           var twin = new BasicDigitalTwin
+            var twin = new BasicDigitalTwin
             {
                 Id = model.TrainID,
                 Metadata = { ModelId = ModelIDs.TrainModelID },
@@ -67,10 +67,32 @@ namespace Rail.DigitalTwin.Core.Azure
                     { "trainName", model.TrainName },
                     { "trainLength", model.TrainLength },
                     { "speed", Math.Round(model.Speed, 2) },
+                    { "recommendedSpeed", Math.Round(model.RecommendedSpeed, 2) },
+                    { "simulatorSpeed", Math.Round(model.SimulatorSpeed, 2) },
+                    { "frontTravelled", Math.Round(model.FrontTravelled, 2) },
+                    { "rearTravelled", Math.Round(model.RearTravelled, 2) },
                 }
             };
 
             return twin;
+        }
+
+        public static TrainModel MapTrain(BasicDigitalTwin twin)
+        {
+            TrainModel model = new TrainModel()
+            {
+                TrainID = twin.Id,
+                TrainNumber = Convert.ToInt32(twin.Contents["trainNumber"].ToString()),
+                TrainName = twin.Contents["trainName"].ToString()!,
+                TrainLength = Convert.ToInt32(twin.Contents["trainLength"].ToString()),
+                Speed = Convert.ToDouble(twin.Contents["speed"].ToString()),
+                RecommendedSpeed = Convert.ToDouble(twin.Contents["recommendedSpeed"].ToString()),
+                SimulatorSpeed = Convert.ToDouble(twin.Contents["simulatorSpeed"].ToString()),
+                FrontTravelled = Convert.ToDouble(twin.Contents["frontTravelled"].ToString()),
+                RearTravelled = Convert.ToDouble(twin.Contents["rearTravelled"].ToString()),
+            };
+
+            return model;
         }
 
         public static BasicDigitalTwinComponent MapLocationSensor(LocationSensorModel model)
@@ -83,16 +105,29 @@ namespace Rail.DigitalTwin.Core.Azure
                     { "location", new Dictionary<string,object>
                         {
                             { "latitude", model.Location.Latitude },
-                            { "longitude", Math.Round(model.Location.Longitude, 4) }
+                            { "longitude", model.Location.Longitude }
                         }
                     },
-                    { "distanceTravelled", model.DistanceTravelled },
+                    { "distanceTravelled", Math.Round(model.DistanceTravelled, 2) },
                     { "speed", Math.Round(model.Speed, 2) },
                     { "timeElapsed", model.TimeElapsed },
                 }
             };
 
             return twin;
+        }
+        public static LocationSensorModel MapLocationSensor(BasicDigitalTwinComponent twin)
+        {
+            LocationSensorModel model = new LocationSensorModel()
+            {
+                Position = (SensorPosition) Convert.ToInt32(twin.Contents["position"].ToString()),
+                Location = new Location(twin.Contents["location"].ToString()!),
+                DistanceTravelled = Convert.ToDouble(twin.Contents["distanceTravelled"].ToString()),
+                Speed = Convert.ToDouble(twin.Contents["speed"].ToString()),
+                TimeElapsed = Convert.ToInt32(twin.Contents["timeElapsed"].ToString()),
+            };
+
+            return model;
         }
     }
 }

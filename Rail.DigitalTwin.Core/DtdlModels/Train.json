@@ -30,6 +30,21 @@
       "schema": "double"
     },
     {
+      "@type": "Property",
+      "name": "simulatorSpeed",
+      "schema": "double"
+    },
+    {
+      "@type": "Property",
+      "name": "frontTravelled",
+      "schema": "double"
+    },
+    {
+      "@type": "Property",
+      "name": "rearTravelled",
+      "schema": "double"
+    },
+    {
       "@type": "Component",
       "name": "frontSensor",
       "schema": "dtmi:com:nootus:LocationSensor;1"
@@ -38,13 +53,6 @@
       "@type": "Component",
       "name": "rearSensor",
       "schema": "dtmi:com:nootus:LocationSensor;1"
-    },
-    {
-      "@type": "Relationship",
-      "@id": "dtmi:com:nootus:Train:Section;1",
-      "name": "section",
-      "displayName": "Section",
-      "target": "dtmi:com:nootus:Section;1"
-    }    
+    }
   ]
 }

@@ -1,5 +1,7 @@
 ﻿using Rail.DigitalTwin.Core.AzureFunctions;
 using Rail.DigitalTwin.Core.Models;
+using Rail.DigitalTwin.Core.Simulator;
+using Rail.DigitalTwin.Core.Utilities;
 using System.Configuration;
 
 AzureConfig azureConfig = new AzureConfig()
@@ -13,6 +15,17 @@ AzureConfig azureConfig = new AzureConfig()
 string modelDirectory = AppContext.BaseDirectory + ConfigurationManager.AppSettings["ModelDirectory"]!;
 
 
+var sectionModel = new SectionModel()
+{
+    Length = 10 * 1000, // meters
+    Speed = 150 * (5.0 / 18.0), // meters/sec
+    SafeDistance = 200, // meters
+    CriticalDistance = 100, // meters
+    StartLocation = new Location(17, 78), // Hyderabad location
+};
+sectionModel.EndLocation = DistanceCalculator.GetPoint2(sectionModel.StartLocation, sectionModel.Length);
+
+
 TrainModel trainModel = new TrainModel()
 {
     TrainNumber = 123,
@@ -23,22 +36,17 @@ TrainModel trainModel = new TrainModel()
 
 
 
-DigitalTwinFunctions.Initialize(azureConfig);
+DigitalTwinFunctions.Connect(azureConfig);
 await DigitalTwinFunctions.CleanupAsync();
 await DigitalTwinFunctions.CreateModelsAsync(modelDirectory);
-await DigitalTwinFunctions.CreateSectionTwinAsync();
+await DigitalTwinFunctions.CreateSectionTwinAsync(sectionModel);
+
 await DigitalTwinFunctions.CreateTrainTwinAsync(trainModel);
+//await DigitalTwinFunctions.CreateTrainTwinAsync(trainModel);
+//await DigitalTwinFunctions.CreateTrainTwinAsync(trainModel);
 
-//await DigitalTwinFunctions.CleanupAsync();
+await Task.Delay(5000);
+DeviceSimulator simulator = new DeviceSimulator();
+await simulator.SimulateTrainsAsync();
 
-
-
-//DeviceSimulator simulator = new DeviceSimulator();
-//List<TrainModel> trainTwins = simulator.Initialize();
-
-//while (trainTwins.Count > 0)
-//{
-//    await simulator.SimulateTrainsAsync();
-//}
-
-
+await DigitalTwinFunctions.CleanupAsync();

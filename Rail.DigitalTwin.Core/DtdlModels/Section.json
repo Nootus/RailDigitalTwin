@@ -57,7 +57,13 @@
           }
         ]
       }
-    }
+    },
+    {
+      "@type": "Relationship",
+      "name": "contains",
+      "displayName": "contains",
+      "target": "dtmi:com:nootus:Train;1"
+    }    
   ]
 }
 

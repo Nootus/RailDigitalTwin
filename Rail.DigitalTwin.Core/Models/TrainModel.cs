@@ -7,8 +7,6 @@ namespace Rail.DigitalTwin.Core.Models
     public class TrainModel
     {
         [JsonIgnore]
-        public SectionModel Section { get; set; }
-        [JsonIgnore]
         public LocationSensorModel FrontSensor { get; set; }
         [JsonIgnore]
         public LocationSensorModel RearSensor { get; set; }

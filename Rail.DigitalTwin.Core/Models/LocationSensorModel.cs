@@ -4,6 +4,8 @@ namespace Rail.DigitalTwin.Core.Models
 {
     public class LocationSensorModel
     {
+        public LocationSensorModel() { }
+
         public LocationSensorModel(string sensorId, SensorPosition position, Location location)
         {
             SensorId = sensorId;
