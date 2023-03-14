@@ -1,12 +1,19 @@
 ﻿using Rail.DigitalTwin.Core.Azure;
 using Rail.DigitalTwin.Core.Models;
+using Rail.DigitalTwin.Core.Utilities;
 
 namespace Rail.DigitalTwin.Core.AzureFunctions
 {
     public static class DigitalTwinFunctions
     {
-        private static readonly object _lockObj = new Object();
         private static RailClient? _client;
+        private static readonly EventQueue<LocationSensorModel> _sensorQueue;
+
+        static DigitalTwinFunctions()
+        {
+            _sensorQueue = EventQueue<LocationSensorModel>.Instance;
+            _sensorQueue.Enqueued += ProcessLocationSensorAsync;
+        }
 
         #region Initialize
         public static void Connect(AzureConfig azureConfig)
@@ -61,14 +68,31 @@ namespace Rail.DigitalTwin.Core.AzureFunctions
             Console.WriteLine("Train Twin Created");
         }
 
+        // used in simulator
         public static async Task<List<TrainModel>> GetTrainsAsync()
         {
             return await _client!.GetTrainsAsync();
         }
 
+        // used in simulator
+        public static async Task<TrainModel?> GetTrainAsync(string trainID)
+        {
+            return await _client!.GetTrainAsync(trainID);
+        }
+
+        public static async Task<LocationSensorModel> GetSensorByIDAsync(string sensorID)
+        {
+            return await _client!.GetSensorByIDAsync(sensorID);
+        }
+
         public static async Task<SectionModel> GetSectionAsync()
         {
             return await _client!.GetSectionAsync();
+        }
+
+        public static async Task ProcessLocationSensorAsync(LocationSensorModel sensorModel)
+        {
+            await _client!.ProcessLocationSensorAsync(sensorModel);
         }
     }
 }

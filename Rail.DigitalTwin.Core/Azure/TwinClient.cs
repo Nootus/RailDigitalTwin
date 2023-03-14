@@ -95,11 +95,11 @@ namespace Rail.DigitalTwin.Core.Azure
             List<BasicDigitalTwin> twinList = await GetTwinsAsync(modelID);
             foreach (var twin in twinList)
             {
-                await DeleteTwinAsync(twin.Id);
+                await DeleteTwinByIDAsync(twin.Id);
             }
         }
 
-        protected async Task DeleteTwinAsync(string twinID)
+        protected async Task DeleteTwinByIDAsync(string twinID)
         {
             // Delete all source relationship
             AsyncPageable<BasicRelationship> relationships = _client.GetRelationshipsAsync<BasicRelationship>(twinID);

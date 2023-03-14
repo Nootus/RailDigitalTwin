@@ -6,9 +6,10 @@ namespace Rail.DigitalTwin.Core.Models
     {
         public LocationSensorModel() { }
 
-        public LocationSensorModel(string sensorId, SensorPosition position, Location location)
+        public LocationSensorModel(string sensorID, string trainID, SensorPosition position, Location location)
         {
-            SensorId = sensorId;
+            SensorID = sensorID;
+            TrainID = trainID;
             Position = position;
             Location = location;
             DistanceTravelled = 0;
@@ -18,15 +19,17 @@ namespace Rail.DigitalTwin.Core.Models
 
         public LocationSensorModel(LocationSensorModel sensor)
         {
-            SensorId = sensor.SensorId;
+            SensorID = sensor.SensorID;
+            TrainID = sensor.TrainID;
             Position = sensor.Position;
             Location = sensor.Location;
-            DistanceTravelled = 0;
+            DistanceTravelled = sensor.DistanceTravelled;
             Speed = 0;
             TimeElapsed = 0;
         }
 
-        public string SensorId { get; set; }
+        public string SensorID { get; set; }
+        public string TrainID { get; set; }
         public SensorPosition Position { get; set; }
         public Location Location { get; set; }
         public double DistanceTravelled { get; set; } // meters

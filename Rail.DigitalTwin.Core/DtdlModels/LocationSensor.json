@@ -6,6 +6,16 @@
   "contents": [
     {
       "@type": "Property",
+      "name": "sensorID",
+      "schema": "string"
+    },
+    {
+      "@type": "Property",
+      "name": "trainID",
+      "schema": "string"
+    },
+    {
+      "@type": "Property",
       "name": "location",
       "schema": {
         "@type": "Object",

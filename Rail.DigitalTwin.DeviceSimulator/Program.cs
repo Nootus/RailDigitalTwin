@@ -17,7 +17,7 @@ string modelDirectory = AppContext.BaseDirectory + ConfigurationManager.AppSetti
 
 var sectionModel = new SectionModel()
 {
-    Length = 10 * 1000, // meters
+    Length = 200, // 1 * 1000, // meters
     Speed = 150 * (5.0 / 18.0), // meters/sec
     SafeDistance = 200, // meters
     CriticalDistance = 100, // meters
@@ -30,10 +30,9 @@ TrainModel trainModel = new TrainModel()
 {
     TrainNumber = 123,
     TrainName = "PPK",
-    TrainLength = 350,
+    TrainLength = 100,
     Speed = 120 * (5.0 / 18),
 };
-
 
 
 DigitalTwinFunctions.Connect(azureConfig);
@@ -42,11 +41,10 @@ await DigitalTwinFunctions.CreateModelsAsync(modelDirectory);
 await DigitalTwinFunctions.CreateSectionTwinAsync(sectionModel);
 
 await DigitalTwinFunctions.CreateTrainTwinAsync(trainModel);
-//await DigitalTwinFunctions.CreateTrainTwinAsync(trainModel);
-//await DigitalTwinFunctions.CreateTrainTwinAsync(trainModel);
-
 await Task.Delay(5000);
+
 DeviceSimulator simulator = new DeviceSimulator();
 await simulator.SimulateTrainsAsync();
-
-await DigitalTwinFunctions.CleanupAsync();
+//await Task.Delay(20000);
+Console.WriteLine("End");   
+//await DigitalTwinFunctions.CleanupAsync();

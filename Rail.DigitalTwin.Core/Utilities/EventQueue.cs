@@ -1,6 +1,6 @@
 ﻿namespace Rail.DigitalTwin.Core.Utilities
 {
-    public delegate void EventQueueHandler<T>(T sender);
+    public delegate Task EventQueueHandler<T>(T sender);
     public class EventQueue<T>
     {
         private static readonly EventQueue<T> instance = new EventQueue<T>();

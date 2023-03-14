@@ -1,9 +1,5 @@
 ﻿using Azure.DigitalTwins.Core;
-using Microsoft.VisualBasic;
 using Rail.DigitalTwin.Core.Models;
-using System.Security.Cryptography.X509Certificates;
-using System.Text.Json;
-using static System.Collections.Specialized.BitVector32;
 
 namespace Rail.DigitalTwin.Core.Azure
 {
@@ -57,6 +53,10 @@ namespace Rail.DigitalTwin.Core.Azure
 
         public static BasicDigitalTwin MapTrain(TrainModel model)
         {
+            // creating sensor twins
+            var frontSensorTwin = Mapper.MapLocationSensor(model.FrontSensor);
+            var rearSensorTwin = Mapper.MapLocationSensor(model.RearSensor);
+
             var twin = new BasicDigitalTwin
             {
                 Id = model.TrainID,
@@ -71,6 +71,8 @@ namespace Rail.DigitalTwin.Core.Azure
                     { "simulatorSpeed", Math.Round(model.SimulatorSpeed, 2) },
                     { "frontTravelled", Math.Round(model.FrontTravelled, 2) },
                     { "rearTravelled", Math.Round(model.RearTravelled, 2) },
+                    { "frontSensor", frontSensorTwin },
+                    { "rearSensor", rearSensorTwin }
                 }
             };
 
@@ -101,6 +103,8 @@ namespace Rail.DigitalTwin.Core.Azure
             {
                 Contents =
                 {
+                    { "sensorID", model.SensorID },
+                    { "trainID", model.TrainID },
                     { "position", model.Position },
                     { "location", new Dictionary<string,object>
                         {
@@ -120,6 +124,8 @@ namespace Rail.DigitalTwin.Core.Azure
         {
             LocationSensorModel model = new LocationSensorModel()
             {
+                SensorID = twin.Contents["sensorID"].ToString()!,
+                TrainID = twin.Contents["trainID"].ToString()!,
                 Position = (SensorPosition) Convert.ToInt32(twin.Contents["position"].ToString()),
                 Location = new Location(twin.Contents["location"].ToString()!),
                 DistanceTravelled = Convert.ToDouble(twin.Contents["distanceTravelled"].ToString()),

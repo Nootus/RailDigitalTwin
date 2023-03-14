@@ -1,18 +1,20 @@
-﻿using Azure.DigitalTwins.Core;
+﻿using Azure;
+using Azure.DigitalTwins.Core;
 using Rail.DigitalTwin.Core.Models;
 using Rail.DigitalTwin.Core.Utilities;
+using System.Reflection;
 
 namespace Rail.DigitalTwin.Core.Azure
 {
     public class TrainClient : TwinClient
     {
-        private string _trainIDPrefix = "train-";
-        private string _frontSensorName = "frontSensor";
-        private string _rearSensorName = "rearSensor";
+        private readonly string _trainIDPrefix = "train-";
+        private readonly string _frontSensorName = "frontSensor";
+        private readonly string _rearSensorName = "rearSensor";
 
+        private readonly SectionClient _sectionClient;
         private int _trainIndex = 0;
 
-        private SectionClient _sectionClient;
 
         public TrainClient(DigitalTwinsClient client, SectionClient sectionClient) : base(client) 
         { 
@@ -31,23 +33,16 @@ namespace Rail.DigitalTwin.Core.Azure
             Location frontLocation = section.SectionModel.StartLocation;
             Location rearLocation = DistanceCalculator.GetPoint2(frontLocation, -trainModel.TrainLength);
             trainModel.FrontSensor = new LocationSensorModel(
-                                            trainModel.TrainID + "-" + SensorPosition.Front.ToString(), 
-                                            SensorPosition.Front, frontLocation);
+                                            trainModel.TrainID + "-" + _frontSensorName, 
+                                            trainModel.TrainID, SensorPosition.Front, frontLocation);
             trainModel.RearSensor = new LocationSensorModel(
-                                            trainModel.TrainID + "-" + SensorPosition.Rear.ToString(),
-                                            SensorPosition.Rear, rearLocation);
-
-            // creating sensor twins
-            var frontSensorTwin = Mapper.MapLocationSensor(trainModel.FrontSensor);
-            var rearSensorTwin = Mapper.MapLocationSensor(trainModel.RearSensor);
+                                            trainModel.TrainID + "-" + _rearSensorName,
+                                            trainModel.TrainID, SensorPosition.Rear, rearLocation);
 
             var trainTwin = Mapper.MapTrain(trainModel);
-            trainTwin.Contents.Add("frontSensor", frontSensorTwin);
-            trainTwin.Contents.Add("rearSensor", rearSensorTwin);
 
             var trainTwinResponse = await _client.CreateOrReplaceDigitalTwinAsync<BasicDigitalTwin>(trainTwin.Id, trainTwin);
             trainTwin = trainTwinResponse.Value; // assigning the twin returned from Azure
-
 
             // Create relationship
             string relationName = "contains";
@@ -64,6 +59,7 @@ namespace Rail.DigitalTwin.Core.Azure
             await _client.CreateOrReplaceRelationshipAsync(section.SectionTwin.Id, relationId, relationship);
         }
 
+        // this is used in simulator
         public async Task<List<TrainModel>> GetTrainsAsync()
         {
             List<BasicDigitalTwin> twins = await GetTwinsAsync(ModelIDs.TrainModelID);
@@ -71,14 +67,64 @@ namespace Rail.DigitalTwin.Core.Azure
             List<TrainModel> models = new List<TrainModel>();
             foreach (BasicDigitalTwin tw in twins)
             {
-                TrainModel model = Mapper.MapTrain(tw);
-                var frontSensorTwin = (await _client.GetComponentAsync<BasicDigitalTwinComponent>(tw.Id, _frontSensorName)).Value;
-                model.FrontSensor = Mapper.MapLocationSensor(frontSensorTwin);
-                var rearSensorTwin = (await _client.GetComponentAsync<BasicDigitalTwinComponent>(tw.Id, _rearSensorName)).Value;
-                model.RearSensor = Mapper.MapLocationSensor(rearSensorTwin);
-                models.Add(model);
+                try
+                {
+                    var model = await GetTrainWithSensors(tw);
+                    models.Add(model);
+                }
+                catch
+                {
+                    // ignore this exception as there is a delay with SQL statement and GetDigitalTwin
+                }
             }
             return models;
+        }
+
+        public async Task<TrainModel?> GetTrainAsync(string trainID)
+        {
+            //return cachedTrains.GetValueOrDefault(trainID);
+            BasicDigitalTwin? twin = await GetTwinByIDAsync(trainID);
+            if (twin == null)
+                return null;
+            else
+                return Mapper.MapTrain(twin);
+        }
+
+        public async Task<LocationSensorModel> GetSensorByIDAsync(string sensorID)
+        {
+            string trainID = sensorID.Substring(0, sensorID.LastIndexOf("-"));
+            string componentName = sensorID.Substring(sensorID.LastIndexOf("-") + 1);
+            var sensorTwin = await _client.GetComponentAsync<BasicDigitalTwinComponent>(trainID, componentName);
+            LocationSensorModel model = Mapper.MapLocationSensor(sensorTwin);
+            return model;
+        }
+
+        public async Task<TrainModel> GetTrainWithSensors(string trainID)
+        {
+            BasicDigitalTwin trainTwin = await _client.GetDigitalTwinAsync<BasicDigitalTwin>(trainID);
+            return await GetTrainWithSensors(trainTwin);
+        }
+
+        public async Task<TrainModel> GetTrainWithSensors(BasicDigitalTwin trainTwin)
+        {
+            TrainModel model = Mapper.MapTrain(trainTwin);
+            var frontSensorTwin = await _client.GetComponentAsync<BasicDigitalTwinComponent>(trainTwin.Id, _frontSensorName);
+            model.FrontSensor = Mapper.MapLocationSensor(frontSensorTwin);
+            var rearSensorTwin = await _client.GetComponentAsync<BasicDigitalTwinComponent>(trainTwin.Id, _rearSensorName);
+            model.RearSensor = Mapper.MapLocationSensor(rearSensorTwin);
+
+            return model;
+        }
+
+        public async Task UpdateTrainAsync(TrainModel trainModel)
+        {
+            BasicDigitalTwin trainTwin = Mapper.MapTrain(trainModel);
+            await _client.CreateOrReplaceDigitalTwinAsync<BasicDigitalTwin>(trainTwin.Id, trainTwin);
+        }
+
+        public async Task DeleteTrainByIDAsync(TrainModel trainModel)
+        {
+            await DeleteTwinByIDAsync(trainModel.TrainID);
         }
     }
 }

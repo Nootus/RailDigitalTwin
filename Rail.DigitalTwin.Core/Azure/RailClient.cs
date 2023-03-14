@@ -11,12 +11,14 @@ namespace Rail.DigitalTwin.Core.Azure
     {
         private SectionClient _sectionClient;
         private TrainClient _trainClient;
+        private SensorClient _sensorClient;
 
         #region Initialize
         public RailClient(AzureConfig azureConfig) : base(azureConfig) 
         {
             _sectionClient = new SectionClient(_client);
             _trainClient = new TrainClient(_client, _sectionClient);
+            _sensorClient = new SensorClient(_client, _trainClient, _sectionClient);
         }
 
         public async Task CreateModelsAsync(string modelDirectory)
@@ -71,10 +73,25 @@ namespace Rail.DigitalTwin.Core.Azure
             return await _trainClient.GetTrainsAsync();
         }
 
+        public async Task<TrainModel?> GetTrainAsync(string trainID)
+        {
+            return await _trainClient!.GetTrainAsync(trainID);
+        }
+
+        public async Task<LocationSensorModel> GetSensorByIDAsync(string sensorID)
+        {
+            return await _trainClient.GetSensorByIDAsync(sensorID);
+        }
+
         public async Task<SectionModel> GetSectionAsync()
         {
             var section = await _sectionClient.GetSectionAsync();
             return section.SectionModel;
+        }
+
+        public async Task ProcessLocationSensorAsync(LocationSensorModel sensorModel)
+        {
+            await _sensorClient.ProcessLocationSensorAsync(sensorModel);
         }
     }
 }

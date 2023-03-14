@@ -17,34 +17,40 @@ namespace Rail.DigitalTwin.Core.Simulator
             //getting section model
             _sectionModel = await DigitalTwinFunctions.GetSectionAsync();
 
-            List<TrainModel> trains = await DigitalTwinFunctions.GetTrainsAsync();
-            foreach (TrainModel train in trains)
+            List<TrainModel> trains = new List<TrainModel>();
+            do
             {
-                SimulateSensors(train);
-            }
-            await Task.Delay(TimeDelayms);
+                trains = await DigitalTwinFunctions.GetTrainsAsync();
+                foreach (TrainModel train in trains)
+                {
+                    await SimulateSensors(train);
+                }
+                await Task.Delay(TimeDelayms);
+            } while (trains.Count > 0);
         }
 
-        private void SimulateSensors(TrainModel trainTwin)
+        private async Task SimulateSensors(TrainModel trainModel)
         {
-            // Writing block distances
-            Console.WriteLine($"{trainTwin.FrontTravelled:F2} - {trainTwin.RearTravelled:F2} : {trainTwin.Speed * 18.0 / 5:F2}");
-
-            LocationSensorModel frontSensor = new LocationSensorModel(trainTwin.FrontSensor);
-            LocationSensorModel rearSensor = new LocationSensorModel(trainTwin.RearSensor);
-            frontSensor.TimeElapsed = _timer;
-            rearSensor.TimeElapsed = _timer;
-
             // slightly changing the speed to show some variance in UI
             Random random = new Random();
             double randomNumber = Math.Round(random.NextDouble() * 2 - 1, 2);
-            double speed = trainTwin.SimulatorSpeed + randomNumber;
+            double speed = trainModel.SimulatorSpeed + randomNumber;
             double distanceTravelled = speed * _timer;
 
-            Location frontLocation = DistanceCalculator.GetPoint2(frontSensor.Location, distanceTravelled);
-            Location rearLocation = DistanceCalculator.GetPoint2(rearSensor.Location, distanceTravelled);
-            DeviceTwinFunctions.ProcessLocationSensor(frontSensor, frontLocation, _sectionModel!.StartLocation);
-            DeviceTwinFunctions.ProcessLocationSensor(rearSensor, rearLocation, _sectionModel!.StartLocation);
+            Location frontLocation = DistanceCalculator.GetPoint2(trainModel.FrontSensor.Location, distanceTravelled);
+            Location rearLocation = DistanceCalculator.GetPoint2(trainModel.RearSensor.Location, distanceTravelled);
+
+            await DeviceTwinFunctions.ProcessLocationSensor(new DeviceModel(trainModel.FrontSensor.SensorID, _timer,
+                                                                frontLocation.Latitude, frontLocation.Longitude));
+            await DeviceTwinFunctions.ProcessLocationSensor(new DeviceModel(trainModel.RearSensor.SensorID, _timer,
+                                                                rearLocation.Latitude, rearLocation.Longitude));
+
+            // Writing block distances for debugging
+            var model = await DigitalTwinFunctions.GetTrainAsync(trainModel.TrainID);
+            if(model != null)
+            {
+                Console.WriteLine($"{model.FrontTravelled:F2} - {model.RearTravelled:F2} : {model.Speed * 18.0 / 5:F2}");
+            }
         }
     }
 }
