@@ -1,0 +1,5 @@
+:host {
+  flex: 1;
+  background: url(/assets/RailSignaling.jpg) no-repeat center center;
+  background-size: cover;
+}

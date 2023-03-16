@@ -1,0 +1,7 @@
+<div class="container text-right">
+  <button mat-raised-button (click)="openStartTrains()">Start Train</button>
+  <button mat-raised-button (click)="openClearTrains()">Clear All Trains</button>
+</div>
+<app-section [section]="section"></app-section>
+<app-railway-section [section]="section" [trains]="trains"></app-railway-section>
+<app-train-list [trains]="trains" (adjustSpeedEvent)="adjustSpeed($event)"></app-train-list>

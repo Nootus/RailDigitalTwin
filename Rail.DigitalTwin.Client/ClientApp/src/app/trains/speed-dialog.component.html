@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>{{ train.trainNumber }} - {{ train.trainName }}</h2>
+<mat-dialog-content>
+  <form #form="ngForm">
+    <input [hidden]="true" name="trainID" [(ngModel)]="train.trainID">
+    <mat-form-field>
+      <mat-label>Set Speed</mat-label>
+      <input matInput name="speed"
+             [ngModel]="train.recommendedSpeed | number: '1.0-0'"
+             (ngModelChange)="train.recommendedSpeed=$event" required />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="false">Cancel</button>
+  <button mat-button color="primary" [mat-dialog-close]="form.value">Set</button>
+</mat-dialog-actions>

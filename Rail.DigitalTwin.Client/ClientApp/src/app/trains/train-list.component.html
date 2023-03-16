@@ -1,0 +1,39 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 col-lg-3" *ngFor="let train of trains">
+      <mat-card>
+        <mat-card-header style="justify-content: center;">
+          <mat-card-title>{{ train.trainNumber }} - {{ train.trainName }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="speed-guage">
+            <radial-gauge [options]="radial_options"
+                          [attr.value]="train.speed">
+            </radial-gauge>
+          </div>
+          <div class="train-details">
+            <div>
+              {{ train.speed | number: '1.0-2' }} km/h
+              <p>
+                Recommended Speed: <b>{{ train.recommendedSpeed | number: '1.0-0' }} km/h </b>
+              </p>
+            </div>
+            <p style="text-align: left; padding:0px;margin: 0px">Block:</p>
+            <div class="row">
+              <div class="col block-dist">
+                Front: {{ train.frontTravelled | number: '1.0-0' }} m
+              </div>
+              <div class="col block-dist">
+                Rear: {{ train.rearTravelled | number: '1.0-0' }} m
+              </div>
+            </div>
+            <p>Train Length: {{ train.trainLength }} meters</p>
+          </div>
+        </mat-card-content>
+        <!--<mat-card-actions align="end">
+          <button mat-raised-button (click)="adjustSpeed(train)">Adjust Speed</button>
+        </mat-card-actions>-->
+      </mat-card>
+    </div>
+  </div>
+</div>

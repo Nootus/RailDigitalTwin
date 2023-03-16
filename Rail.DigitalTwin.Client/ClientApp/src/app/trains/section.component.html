@@ -1,0 +1,23 @@
+<div class="container">
+  <mat-card>
+    <mat-card-header style="justify-content: center;">
+      <mat-card-title>Section Details</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row">
+        <div class="col-sm-3">
+          <i>Length: </i>{{section.length}} km
+        </div>
+        <div class="col-sm-3">
+          <i>Speed: </i>{{section.speed | number: '1.0-0'}} km/h
+        </div>
+        <div class="col-sm-3">
+          <i>Safe Distance: </i>{{section.safeDistance}} meters
+        </div>
+        <div class="col-sm-3">
+          <i>Critical Distance: </i>{{section.criticalDistance}} meters
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

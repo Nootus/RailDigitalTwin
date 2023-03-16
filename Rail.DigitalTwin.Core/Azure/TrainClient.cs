@@ -1,8 +1,6 @@
-﻿using Azure;
-using Azure.DigitalTwins.Core;
+﻿using Azure.DigitalTwins.Core;
 using Rail.DigitalTwin.Core.Models;
 using Rail.DigitalTwin.Core.Utilities;
-using System.Reflection;
 
 namespace Rail.DigitalTwin.Core.Azure
 {
@@ -14,6 +12,9 @@ namespace Rail.DigitalTwin.Core.Azure
 
         private readonly SectionClient _sectionClient;
         private int _trainIndex = 0;
+
+        private Dictionary<string, TrainModel> _trainsCache = new Dictionary<string, TrainModel>();
+        private Dictionary<string, LocationSensorModel> _sensorsCache = new Dictionary<string, LocationSensorModel>();
 
 
         public TrainClient(DigitalTwinsClient client, SectionClient sectionClient) : base(client) 
@@ -57,31 +58,43 @@ namespace Rail.DigitalTwin.Core.Azure
             };
 
             await _client.CreateOrReplaceRelationshipAsync(section.SectionTwin.Id, relationId, relationship);
+
+            // caching
+            _trainsCache.Add(trainModel.TrainID, trainModel);
+            _sensorsCache.Add(trainModel.FrontSensor.SensorID, trainModel.FrontSensor);
+            _sensorsCache.Add(trainModel.RearSensor.SensorID, trainModel.RearSensor);
         }
 
         // this is used in simulator
         public async Task<List<TrainModel>> GetTrainsAsync()
         {
-            List<BasicDigitalTwin> twins = await GetTwinsAsync(ModelIDs.TrainModelID);
+            // returning from cache
+            return _trainsCache.Values.ToList();
 
-            List<TrainModel> models = new List<TrainModel>();
-            foreach (BasicDigitalTwin tw in twins)
-            {
-                try
-                {
-                    var model = await GetTrainWithSensors(tw);
-                    models.Add(model);
-                }
-                catch
-                {
-                    // ignore this exception as there is a delay with SQL statement and GetDigitalTwin
-                }
-            }
-            return models;
+            //List<BasicDigitalTwin> twins = await GetTwinsAsync(ModelIDs.TrainModelID);
+
+            //List<TrainModel> models = new List<TrainModel>();
+            //foreach (BasicDigitalTwin tw in twins)
+            //{
+            //    try
+            //    {
+            //        var model = await GetTrainWithSensors(tw);
+            //        models.Add(model);
+            //    }
+            //    catch
+            //    {
+            //        // ignore this exception as there is a delay with SQL statement and GetDigitalTwin
+            //    }
+            //}
+            //return models;
         }
 
         public async Task<TrainModel?> GetTrainAsync(string trainID)
         {
+            // returning from cache
+            if(_trainsCache.ContainsKey(trainID))
+                return _trainsCache[trainID];
+
             //return cachedTrains.GetValueOrDefault(trainID);
             BasicDigitalTwin? twin = await GetTwinByIDAsync(trainID);
             if (twin == null)
@@ -90,19 +103,32 @@ namespace Rail.DigitalTwin.Core.Azure
                 return Mapper.MapTrain(twin);
         }
 
-        public async Task<LocationSensorModel> GetSensorByIDAsync(string sensorID)
+        public async Task<LocationSensorModel?> GetSensorByIDAsync(string sensorID)
         {
-            string trainID = sensorID.Substring(0, sensorID.LastIndexOf("-"));
-            string componentName = sensorID.Substring(sensorID.LastIndexOf("-") + 1);
-            var sensorTwin = await _client.GetComponentAsync<BasicDigitalTwinComponent>(trainID, componentName);
-            LocationSensorModel model = Mapper.MapLocationSensor(sensorTwin);
-            return model;
+            // returning from cache
+            if (_sensorsCache.ContainsKey(sensorID))
+                return _sensorsCache[sensorID];
+            else
+                return null;
+
+            //string trainID = sensorID.Substring(0, sensorID.LastIndexOf("-"));
+            //string componentName = sensorID.Substring(sensorID.LastIndexOf("-") + 1);
+            //var sensorTwin = await _client.GetComponentAsync<BasicDigitalTwinComponent>(trainID, componentName);
+            //LocationSensorModel model = Mapper.MapLocationSensor(sensorTwin);
+            //return model;
         }
 
-        public async Task<TrainModel> GetTrainWithSensors(string trainID)
+        // used in DigitalTwin Processing
+        public async Task<TrainModel?> GetTrainWithSensors(string trainID)
         {
-            BasicDigitalTwin trainTwin = await _client.GetDigitalTwinAsync<BasicDigitalTwin>(trainID);
-            return await GetTrainWithSensors(trainTwin);
+            // returning from cache
+            if (_trainsCache.ContainsKey(trainID))
+                return _trainsCache[trainID];
+            else
+                return null;
+
+            //BasicDigitalTwin trainTwin = await _client.GetDigitalTwinAsync<BasicDigitalTwin>(trainID);
+            //return await GetTrainWithSensors(trainTwin);
         }
 
         public async Task<TrainModel> GetTrainWithSensors(BasicDigitalTwin trainTwin)
@@ -119,12 +145,38 @@ namespace Rail.DigitalTwin.Core.Azure
         public async Task UpdateTrainAsync(TrainModel trainModel)
         {
             BasicDigitalTwin trainTwin = Mapper.MapTrain(trainModel);
-            await _client.CreateOrReplaceDigitalTwinAsync<BasicDigitalTwin>(trainTwin.Id, trainTwin);
+            // make this asynchronous
+            _client.CreateOrReplaceDigitalTwinAsync<BasicDigitalTwin>(trainTwin.Id, trainTwin);
+
+            // caching
+            _trainsCache[trainModel.TrainID] = trainModel;
+            _sensorsCache[trainModel.FrontSensor.SensorID] = trainModel.FrontSensor;
+            _sensorsCache[trainModel.RearSensor.SensorID] = trainModel.RearSensor;
+        }
+
+        public async Task DeleteTrainsAsync()
+        {
+            foreach(var trainModel in _trainsCache.Values)
+            {
+                await DeleteTrainByIDAsync(trainModel);
+            }
         }
 
         public async Task DeleteTrainByIDAsync(TrainModel trainModel)
         {
-            await DeleteTwinByIDAsync(trainModel.TrainID);
+            // make this asynchronous
+            DeleteTwinByIDAsync(trainModel.TrainID);
+
+            // caching
+            _trainsCache.Remove(trainModel.TrainID);
+            _sensorsCache.Remove(trainModel.FrontSensor.SensorID);
+            _sensorsCache.Remove(trainModel.RearSensor.SensorID);
+        }
+
+        public void ClearCache()
+        {
+            _trainsCache.Clear();
+            _sensorsCache.Clear();
         }
     }
 }

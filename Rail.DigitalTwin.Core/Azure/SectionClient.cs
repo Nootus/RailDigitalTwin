@@ -1,14 +1,13 @@
 ﻿using Azure.DigitalTwins.Core;
 using Rail.DigitalTwin.Core.Models;
-using Rail.DigitalTwin.Core.Utilities;
 
 namespace Rail.DigitalTwin.Core.Azure
 {
     public class SectionClient : TwinClient
     {
         private string _sectionID = "section-1";
-        private SectionModel? _sectionModel;
-        private BasicDigitalTwin? _sectionTwin;
+        private SectionModel? _sectionModelCache;
+        private BasicDigitalTwin? _sectionTwinCache;
 
         public SectionClient(DigitalTwinsClient client) : base(client) { }
 
@@ -23,11 +22,11 @@ namespace Rail.DigitalTwin.Core.Azure
         public async Task<(SectionModel SectionModel, BasicDigitalTwin SectionTwin)> GetSectionAsync()
         {
             // checking whether section Twin exists
-            if(_sectionTwin == null || _sectionModel == null) {
-                _sectionTwin = await GetTwinByIDAsync(_sectionID);
-                _sectionModel = Mapper.MapSection(_sectionTwin!);
+            if(_sectionTwinCache == null || _sectionModelCache == null) {
+                _sectionTwinCache = await GetTwinByIDAsync(_sectionID);
+                _sectionModelCache = Mapper.MapSection(_sectionTwinCache!);
             }
-            return (_sectionModel!, _sectionTwin!);
+            return (_sectionModelCache!, _sectionTwinCache!);
         }
     }
 }

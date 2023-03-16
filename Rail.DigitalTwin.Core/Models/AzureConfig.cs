@@ -7,6 +7,7 @@ namespace Rail.DigitalTwin.Core.Models
         public string TenantID { get; set; }
         public string ClientID { get; set; }
         public string ClientSecret { get; set; }
+        public string ModelDirectory { get; set; }
     }
 }
 #pragma warning restore CS8618

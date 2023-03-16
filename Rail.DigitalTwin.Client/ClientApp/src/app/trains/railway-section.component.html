@@ -1,0 +1,20 @@
+<div class="railway-section">
+  <div class="track" [ngStyle]="{ 'width.px': sectionPixels }">
+    <div class="safe-dist" *ngFor="let train of trains"
+         [ngStyle]="{
+            'left.px': train.trainLocation,
+            'padding-left.px': safePixles,
+            'padding-right.px': safePixles
+         }">
+      <div class="critical-dist"
+             [ngStyle]="{
+              'padding-left.px': criticalPixles,
+              'padding-right.px': criticalPixles
+           }">
+        <img class="loco" [ngStyle]="{ 'width.px': train.trainWidth }"
+             matTooltip="{{ train.trainNumber }} - {{ train.trainName }}"
+             src="/assets/train.svg" />
+      </div>
+    </div>
+  </div>
+</div>

@@ -6,93 +6,61 @@ namespace Rail.DigitalTwin.Core.AzureFunctions
 {
     public static class DigitalTwinFunctions
     {
-        private static RailClient? _client;
         private static readonly EventQueue<LocationSensorModel> _sensorQueue;
 
         static DigitalTwinFunctions()
         {
             _sensorQueue = EventQueue<LocationSensorModel>.Instance;
-            _sensorQueue.Enqueued += ProcessLocationSensorAsync;
+            //_sensorQueue.Enqueued += ProcessLocationSensorAsync;
         }
 
-        #region Initialize
-        public static void Connect(AzureConfig azureConfig)
+        public static async Task ProcessLocationSensorAsync(LocationSensorModel sensor)
         {
-            _client = new RailClient(azureConfig);
-            Console.WriteLine("Client created");
-        }
+            // checking whether to clear trains
+            if (RailFunctions.ClearTrains)
+            {
+                await RailFunctions.DeleteTrainTwinsAsync();
+                RailFunctions.ClearTrains = false;
+                return;
+            }
 
-        public static async Task CreateModelsAsync(string modelDirectory)
-        {
-            await _client!.CreateModelsAsync(modelDirectory);
-            Console.WriteLine("Models created");
-        }
+            // checking in cache before continuing
 
-        public static async Task CreateSectionTwinAsync(SectionModel sectionModel)
-        {
-            await _client!.CreateSectionTwinAsync(sectionModel);
-            Console.WriteLine("Section Twin Created");
-        }
-        #endregion
 
-        #region Cleanup
-        public static async Task CleanupAsync()
-        {
-            // delete all Twins and Models
-            await DeleteTwinsAsync();
-            await DeleteModelsAsync();
-        }
+            var section = await RailFunctions.GetSectionAsync();
+            TrainModel? trainModel = await RailFunctions.GetTrainWithSensors(sensor.TrainID);
+            if (trainModel == null)
+            {
+                return;
+            }
 
-        public static async Task DeleteModelsAsync()
-        {
-            await _client!.DeleteModelsAsync();
-            Console.WriteLine("Models deleted");
-        }
+            if (sensor.Position == SensorPosition.Front)
+            {
+                trainModel!.FrontTravelled += sensor.DistanceTravelled;
+                trainModel.FrontSensor.DistanceTravelled = sensor.DistanceTravelled;
+                trainModel.FrontSensor.Speed = sensor.Speed;
+                trainModel.FrontSensor.Location = sensor.Location;
+            }
+            else
+            {
+                trainModel!.RearTravelled += sensor.DistanceTravelled;
+                trainModel.RearSensor = sensor;
+                trainModel.RearSensor.DistanceTravelled = sensor.DistanceTravelled;
+                trainModel.RearSensor.Speed = sensor.Speed;
+                trainModel.RearSensor.Location = sensor.Location;
+            }
 
-        public static async Task DeleteTwinsAsync()
-        {
-            await _client!.DeleteTwinsAsync();
-            Console.WriteLine("All Twins Deleted");
-        }
+            trainModel.Speed = sensor.Speed;
+            trainModel.RecommendedSpeed = section.Speed;
 
-        public static async Task DeleteTrainTwins()
-        {
-            await _client!.DeleteTrainTwinsAsync();
-            Console.WriteLine("Train Twins Deleted");
-        }
-        #endregion
+            await RailFunctions.UpdateTrainAsync(trainModel);
 
-        public static async Task CreateTrainTwinAsync(TrainModel model)
-        {
-            await _client!.CreateTrainTwinAsync(model);
-            Console.WriteLine("Train Twin Created");
-        }
-
-        // used in simulator
-        public static async Task<List<TrainModel>> GetTrainsAsync()
-        {
-            return await _client!.GetTrainsAsync();
-        }
-
-        // used in simulator
-        public static async Task<TrainModel?> GetTrainAsync(string trainID)
-        {
-            return await _client!.GetTrainAsync(trainID);
-        }
-
-        public static async Task<LocationSensorModel> GetSensorByIDAsync(string sensorID)
-        {
-            return await _client!.GetSensorByIDAsync(sensorID);
-        }
-
-        public static async Task<SectionModel> GetSectionAsync()
-        {
-            return await _client!.GetSectionAsync();
-        }
-
-        public static async Task ProcessLocationSensorAsync(LocationSensorModel sensorModel)
-        {
-            await _client!.ProcessLocationSensorAsync(sensorModel);
+            // checking if the train crossed the section
+            if (trainModel.FrontTravelled > section.Length &&
+                trainModel.RearTravelled > section.Length)
+            {
+                await RailFunctions.DeleteTrainByIDAsync(trainModel);
+            }
         }
     }
 }

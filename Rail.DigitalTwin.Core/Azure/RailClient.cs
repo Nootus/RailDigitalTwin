@@ -11,14 +11,12 @@ namespace Rail.DigitalTwin.Core.Azure
     {
         private SectionClient _sectionClient;
         private TrainClient _trainClient;
-        private SensorClient _sensorClient;
 
         #region Initialize
         public RailClient(AzureConfig azureConfig) : base(azureConfig) 
         {
             _sectionClient = new SectionClient(_client);
             _trainClient = new TrainClient(_client, _sectionClient);
-            _sensorClient = new SensorClient(_client, _trainClient, _sectionClient);
         }
 
         public async Task CreateModelsAsync(string modelDirectory)
@@ -58,7 +56,8 @@ namespace Rail.DigitalTwin.Core.Azure
 
         public async Task DeleteTrainTwinsAsync()
         {
-            await DeleteAllTwinsAsync(ModelIDs.TrainModelID);
+            // making asynchronous
+            await _trainClient.DeleteTrainsAsync();
         }
         #endregion
 
@@ -78,7 +77,12 @@ namespace Rail.DigitalTwin.Core.Azure
             return await _trainClient!.GetTrainAsync(trainID);
         }
 
-        public async Task<LocationSensorModel> GetSensorByIDAsync(string sensorID)
+        public async Task<TrainModel?> GetTrainWithSensors(string trainID)
+        {
+            return await _trainClient!.GetTrainWithSensors(trainID);
+        }
+
+        public async Task<LocationSensorModel?> GetSensorByIDAsync(string sensorID)
         {
             return await _trainClient.GetSensorByIDAsync(sensorID);
         }
@@ -89,9 +93,14 @@ namespace Rail.DigitalTwin.Core.Azure
             return section.SectionModel;
         }
 
-        public async Task ProcessLocationSensorAsync(LocationSensorModel sensorModel)
+        public async Task UpdateTrainAsync(TrainModel trainModel)
         {
-            await _sensorClient.ProcessLocationSensorAsync(sensorModel);
+            await _trainClient.UpdateTrainAsync(trainModel);
+        }
+
+        public async Task DeleteTrainByIDAsync(TrainModel trainModel)
+        {
+            await _trainClient.DeleteTrainByIDAsync(trainModel);
         }
     }
 }

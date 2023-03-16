@@ -1,0 +1,42 @@
+.railway-section {
+  overflow-x: hidden;
+  margin-bottom: 5px;
+}
+
+.track {
+  padding-top: 6px;
+  margin-bottom: 5px;
+  border-bottom: dotted white;
+  max-width: 1400px;
+  min-height: 50px;
+}
+
+.safe-dist {
+  position: absolute;
+  border: 1px solid grey;
+  max-width: fit-content;
+}
+
+.critical-dist {
+  border: 1px dotted grey;
+  max-width: fit-content;
+}
+
+.loco {
+  height: 40px;
+  position: relative;
+}
+
+::-webkit-scrollbar {
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}

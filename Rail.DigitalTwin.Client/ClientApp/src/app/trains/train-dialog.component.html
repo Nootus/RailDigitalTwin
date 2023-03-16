@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Enter Train Details</h2>
+<mat-dialog-content>
+  <form #form="ngForm">
+    <mat-form-field>
+      <mat-label>Train Number</mat-label>
+      <input matInput name="trainNumber" [(ngModel)]="data.trainNumber" required />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Train Name</mat-label>
+      <input matInput name="trainName" [(ngModel)]="data.trainName" required>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Speed</mat-label>
+      <input matInput name="speed" [(ngModel)]="data.speed" required>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Train Length</mat-label>
+      <input matInput name="trainLength" [(ngModel)]="data.trainLength" required>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="false">Cancel</button>
+  <button mat-button color="primary" [mat-dialog-close]="form.value">Start</button>
+</mat-dialog-actions>

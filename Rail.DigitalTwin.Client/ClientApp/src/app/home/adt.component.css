@@ -1,0 +1,5 @@
+:host {
+  flex: 1;
+  background: url(/assets/azure-topology.png) no-repeat center center;
+  background-size: cover;
+}

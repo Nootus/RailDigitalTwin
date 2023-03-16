@@ -1,4 +1,5 @@
-﻿using Rail.DigitalTwin.Core.Models;
+﻿using Rail.DigitalTwin.Core.Azure;
+using Rail.DigitalTwin.Core.Models;
 using Rail.DigitalTwin.Core.Utilities;
 
 namespace Rail.DigitalTwin.Core.AzureFunctions
@@ -10,9 +11,15 @@ namespace Rail.DigitalTwin.Core.AzureFunctions
         public static async Task ProcessLocationSensor(DeviceModel deviceModel)
         {
             // getting from DigitalTwinFunctions
-            SectionModel sectionModel = await DigitalTwinFunctions.GetSectionAsync();
-            LocationSensorModel sensorModel = new LocationSensorModel(
-                                                        await DigitalTwinFunctions.GetSensorByIDAsync(deviceModel.DeviceID));
+            SectionModel sectionModel = await RailFunctions.GetSectionAsync();
+
+            // checking whether the train is still present in the section
+            LocationSensorModel? sensorTwinModel = await RailFunctions.GetSensorByIDAsync(deviceModel.DeviceID);
+            if(sensorTwinModel == null)
+            {
+                return;
+            }
+            LocationSensorModel sensorModel = new LocationSensorModel(sensorTwinModel);
 
 
             Location deviceLocation = new Location(deviceModel.Latitude, deviceModel.Longitude);

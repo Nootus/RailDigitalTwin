@@ -1,7 +1,5 @@
-﻿using Rail.DigitalTwin.Core.AzureFunctions;
-using Rail.DigitalTwin.Core.Models;
+﻿using Rail.DigitalTwin.Core.Models;
 using Rail.DigitalTwin.Core.Simulator;
-using Rail.DigitalTwin.Core.Utilities;
 using System.Configuration;
 
 AzureConfig azureConfig = new AzureConfig()
@@ -9,42 +7,12 @@ AzureConfig azureConfig = new AzureConfig()
     ADTInstanceUrl = ConfigurationManager.AppSettings["ADTInstanceUrl"]!,
     TenantID = ConfigurationManager.AppSettings["AzureTenantID"]!,
     ClientID = ConfigurationManager.AppSettings["AzureClientID"]!,
-    ClientSecret = ConfigurationManager.AppSettings["AzureClientSecret"]!
+    ClientSecret = ConfigurationManager.AppSettings["AzureClientSecret"]!,
+    ModelDirectory = AppContext.BaseDirectory + ConfigurationManager.AppSettings["ModelDirectory"]!
 };
 
-string modelDirectory = AppContext.BaseDirectory + ConfigurationManager.AppSettings["ModelDirectory"]!;
-
-
-var sectionModel = new SectionModel()
-{
-    Length = 200, // 1 * 1000, // meters
-    Speed = 150 * (5.0 / 18.0), // meters/sec
-    SafeDistance = 200, // meters
-    CriticalDistance = 100, // meters
-    StartLocation = new Location(17, 78), // Hyderabad location
-};
-sectionModel.EndLocation = DistanceCalculator.GetPoint2(sectionModel.StartLocation, sectionModel.Length);
-
-
-TrainModel trainModel = new TrainModel()
-{
-    TrainNumber = 123,
-    TrainName = "PPK",
-    TrainLength = 100,
-    Speed = 120 * (5.0 / 18),
-};
-
-
-DigitalTwinFunctions.Connect(azureConfig);
-await DigitalTwinFunctions.CleanupAsync();
-await DigitalTwinFunctions.CreateModelsAsync(modelDirectory);
-await DigitalTwinFunctions.CreateSectionTwinAsync(sectionModel);
-
-await DigitalTwinFunctions.CreateTrainTwinAsync(trainModel);
-await Task.Delay(5000);
 
 DeviceSimulator simulator = new DeviceSimulator();
-await simulator.SimulateTrainsAsync();
-//await Task.Delay(20000);
-Console.WriteLine("End");   
+await simulator.Initialize(azureConfig, true);
+await simulator.SimulateTrainsAsync(true);
 //await DigitalTwinFunctions.CleanupAsync();
