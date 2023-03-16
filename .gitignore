@@ -232,3 +232,5 @@ _Pvt_Extensions
 /MovingBlock.Client/ClientApp/.angular/
 /Rail.DigitalTwin.DeviceSimulator/App.config
 /Rail.DigitalTwin.AzureFunctions/host.json
+/Rail.DigitalTwin.Client/appsettings.json
+/Rail.DigitalTwin.Client/ClientApp/.angular/cache/15.2.0
