@@ -17,14 +17,13 @@ namespace Rail.DigitalTwin.Client.Controllers
         [HttpPost]
         public async Task<IActionResult> SetTrainSpeed([FromBody] TrainSpeedModel model)
         {
-            //await RailFunctions.SetTrainSpeed(model);
+            await RailFunctions.SetTrainSpeedAsync(model);
             return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> ClearTrainTwins()
         {
-            //await RailFunctions.DeleteTrainTwinsAsync();
             RailFunctions.ClearTrains = true;
             return Ok();
         }

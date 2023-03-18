@@ -102,5 +102,10 @@ namespace Rail.DigitalTwin.Core.Azure
         {
             await _trainClient.DeleteTrainByIDAsync(trainModel);
         }
+
+        public async Task SetTrainSpeedAsync(TrainSpeedModel model)
+        {
+            await _trainClient.SetTrainSpeedAsync(model);
+        }
     }
 }

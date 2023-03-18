@@ -64,8 +64,9 @@ export class LiveViewComponent implements OnInit, OnDestroy {
   }
 
   adjustSpeed(speedModel: any): void {
+    console.log(speedModel);
     speedModel.speed = speedModel.speed * (5.0 / 18);
-    this.http.post(this.baseUrl + 'simulator/settrainspeed', speedModel).subscribe();
+    this.http.post(this.baseUrl + 'simulator/SetTrainSpeed', speedModel).subscribe();
   }
 
   openStartTrains(): void {

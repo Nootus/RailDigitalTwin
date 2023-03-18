@@ -69,7 +69,7 @@ namespace Rail.DigitalTwin.Core.Azure
         public async Task<List<TrainModel>> GetTrainsAsync()
         {
             // returning from cache
-            return _trainsCache.Values.ToList();
+            return _trainsCache.Values.OrderByDescending(t => t.TrainID).ToList();
 
             //List<BasicDigitalTwin> twins = await GetTwinsAsync(ModelIDs.TrainModelID);
 
@@ -153,6 +153,15 @@ namespace Rail.DigitalTwin.Core.Azure
             _sensorsCache[trainModel.FrontSensor.SensorID] = trainModel.FrontSensor;
             _sensorsCache[trainModel.RearSensor.SensorID] = trainModel.RearSensor;
         }
+
+        public async Task SetTrainSpeedAsync(TrainSpeedModel model)
+        {
+            TrainModel trainModel = _trainsCache[model.TrainID];
+            trainModel.Speed = model.Speed;
+            trainModel.SimulatorSpeed = model.Speed;
+            await UpdateTrainAsync(trainModel);
+        }
+
 
         public async Task DeleteTrainsAsync()
         {
